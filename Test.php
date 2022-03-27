@@ -1,118 +1,193 @@
 <?php
+//mostrar errores
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 include 'db.php';
-class Usuario
-{
-    private $from = 'usuarios';
 
-    public $id;
-    public $correo;
-    public $contrasena;
-    public $nickname;
-    public $nombres;
-    public $apellidos;
-    public $noDocumento;
-    public $activo;
-    public $codigo;
-    public $cargos;
-    public $empresa;
-    public $rol;
-    public $tipoDocumento;
-
-    public function __construct($id = 0){
-        $this->id = $id;
-    }
-
-    public function GetFrom()
-    {
-        return $this->from;
-    }
-
-    public function Crear($correo = null, $contrasena = null, $nickname = null, $nombres = null, $apellidos = null, $noDocumento = null, $activo = null, $codigo = null, $rol = null, $tipoDocumento = null, $cargos = null, $empresa = null)
-    {
-        $this->correo = $correo;
-        $this->contrasena = $contrasena;
-        $this->nickname = $nickname;
-        $this->nombres = $nombres;
-        $this->apellidos = $apellidos;
-        $this->noDocumento = $noDocumento;
-        $this->activo = $activo;
-        $this->codigo = $codigo;
-        $this->cargos = $cargos;
-        $this->empresa = $empresa;
-        $this->rol = $rol;
-        $this->tipoDocumento = $tipoDocumento;
-    }
-    // ....Código de la clase....
-}
-
-
+//se conecta a la db
+$db = new db();
 
 echo 'consulta test';
 echo '<br>';
 
-//se conecta a la db
-$db = new DB();
+$usuario = $db->includeModelo('usuarios', __DIR__);
+$log = $db->includeModelo('logs', __DIR__);
 
-//////////////////////////////////////////////////////////////////
+/*
+consulta preparada
+con array
+$usuario->setCorreo(['lion_3214@hotmail.com', 'lion_3214@hotmail.com123']);
+print_r($usuario->getCorreo());
+$arr = $db->selectPre($usuario, 'correo = :correo');
+$res = $db->Ejecutar($arr);
 
-//buscar sin inyeccion
-//$usuario = new Usuario();
-//$usuario->correo = 'lion_3214@hotmail.com';
-//$usuario->correo = ['lion_3214@hotmail.com', 'lion_3214@hotmail.com123'];
-//$arr = $db->SelectPre($usuario, 'correo = :correo');
+un solo valor
+$usuario->setCorreo('lion_3214@hotmail.com');
+$arr = $db->selectPre($usuario, 'correo = :correo');
+$res = $db->Ejecutar($arr);
 
-//buscar con inyeccion
-//$usuario = new Usuario();
-//$usuario->correo = 'lion_3214@hotmail.com';
-//$arr = $db->Select($usuario->GetFrom(), 'correo = "'.$usuario->correo.'"');
-//$arr = $db->Select('usuarios', 'correo = "lion_3214@hotmail.com"');
+$usuario->setCorreo('lion_3214@hotmail.com');
+$usuario->setActivo('0');
+$arr = $db->selectPre($usuario, 'correo = :correo and activo = :activo');
+$res = $db->Ejecutar($arr);
 
-//////////////////////////////////////////////////////////////////
+$usuario->setCorreo(['lion_3214@hotmail.com', 'lion_3214@hotmail.com123']);
+$usuario->setActivo('1');
+$arr = $db->selectPre($usuario, 'correo = :correo and activo = :activo');
+print_r($usuario->getCorreo());
+$res = $db->Ejecutar($arr);
+
+//buscar sin preparar
+$usuario->setCorreo('lion_3214@hotmail.com');
+$arr = $db->select($usuario->getFrom(), 'correo = "'.$usuario->getCorreo().'"');
+//$arr = $db->select('usuarios', 'correo = "lion_3214@hotmail.com"');
+
+//buscar sin preparar
+$usuario->setCorreo('lion_3214@hotmail.com');
+$usuario->setActivo('1');
+//$arr = $db->select($usuario->getFrom(), 'correo = "'.$usuario->getCorreo().'" and activo = "'.$usuario->getActivo().'"');
+$arr = $db->select('usuarios', 'correo = "lion_3214@hotmail.com" and activo = "1"');
+*/
+
+
+/*
+//eliminar
+//$usuario->setId([2, 11]);
+$usuario->setId(2);
+$arr = $db->DeletePre($usuario, 'id = :id');
+$res = $db->Ejecutar($arr);
 
 //eliminar
-//$usuario = new Usuario([10, 11, 12, 13, 14]);
-//$usuario = new Usuario(2);
-//$arr = $db->DeletePre($usuario, 'id = :id');
+$usuario->setId([12, 13]);
+//$usuario->setId(2);
+$usuario->setActivo('1');
+$arr = $db->DeletePre($usuario, 'id = :id and activo = :activo');
+$res = $db->Ejecutar($arr);
 
-//$usuario = new Usuario(2);
-//$arr = $db->Delete($usuario->GetFrom(), 'id = "'.$usuario->id.'"');
-//$arr = $db->Delete('usuarios', 'id = "2"');
+//sin preparar
+$usuario->setId(2);
+//$arr = $db->Delete($usuario->getFrom(), 'id = "'.$usuario->getId().'"');
+$arr = $db->Delete('usuarios', 'id = "2"');
 
-//////////////////////////////////////////////////////////////////
+$usuario->setId(2);
+$usuario->setActivo(1);
+$arr = $db->Delete($usuario->getFrom(), 'id = "'.$usuario->getId().'" and activo = "'.$usuario->getActivo().'"');
+//$arr = $db->Delete('usuarios', 'id = "2" and activo = "1"');
+*/
 
-//insertar
-//$usuario = new Usuario();
-//$usuario->Crear('correo2', 'contrasena', 'nickname', 'nombres', 'apellidos', 'noDocumento', '1', 'codigo', '1', '1');
-//$arr = $db->InsertPre($usuario, ':correo, :contrasena, :nickname, :nombres, :apellidos, :noDocumento, :activo, :codigo, :rol, :tipoDocumento');//, :cargos, :empresa,
+
+/*
+$usuario->setCorreo('creadp php');
+$usuario->setContrasena('contrasena');
+$usuario->setNickname('nickname');
+$usuario->setNombres('nombres');
+$usuario->setApellidos('apellidos');
+$usuario->setNoDocumento('noDocumento');
+$usuario->setActivo(1);
+$usuario->setRol('1');
+$usuario->setTipoDocumento('1');
+$usuario->setCodigo('codigo');
+//$usuario->setCargos('1');
+//$usuario->setEmpresa(1);
+
+$arr = $db->InsertPre($usuario);
+$res = $db->Ejecutar($arr);
+
+$usuario->setCorreo(['creadp php', 'creadp php2']);
+$usuario->setContrasena(['contrasena', 'contrasena2']);
+$usuario->setNickname(['nickname', 'nickname2']);
+$usuario->setNombres(['nombres', 'nombres2']);
+$usuario->setApellidos(['apellidos', 'apellidos2']);
+$usuario->setNoDocumento(['noDocumento', 'noDocumento2']);
+$usuario->setActivo(['1', '0']);
+$usuario->setRol('1');
+$usuario->setTipoDocumento(['1']);
+$usuario->setCodigo(['codigoNew', NULL]);
+//$usuario->setCargos('1');
+//$usuario->setEmpresa(1);
+
+$arr = $db->InsertPre($usuario);
+$res = $db->Ejecutar($arr);
+
+//solo para un valor
+$usuario->setCorreo('creadp phpwwwwww');
+$usuario->setContrasena('contrasena');
+$usuario->setNickname('nickname');
+$usuario->setNombres('nombres');
+$usuario->setApellidos('apellidos');
+$usuario->setNoDocumento('noDocumento');
+$usuario->setActivo(1);
+$usuario->setRol('1');
+$usuario->setTipoDocumento('1');
+$usuario->setCodigo('codigo');
+//$usuario->setCargos('1');
+//$usuario->setEmpresa(1);
+
+//$arr = $db->Insert($usuario);
+*/
 
 
-//$usuario = new Usuario();
-//$usuario->Crear('correo2', 'contrasena', 'nickname', 'nombres', 'apellidos', 'noDocumento', '1', 'codigo', '1', '1');
-//$arr = $db->Insert($usuario->GetFrom(), 'correo, contrasena, nickname, nombres, apellidos, noDocumento, activo, codigo, rol, tipoDocumento', '"'.$usuario->correo.'","'.$usuario->contrasena.'","'.$usuario->nickname.'","'.$usuario->nombres.'","'.$usuario->apellidos.'","'.$usuario->noDocumento.'","'.$usuario->activo.'","'.$usuario->codigo.'","'.$usuario->rol.'","'.$usuario->tipoDocumento.'"');
-//$arr = $db->Insert('usuarios', 'correo, contrasena, nickname, nombres, apellidos, noDocumento, activo, codigo, rol, tipoDocumento', '"correo2","contrasena123","nickname","nombres","apellidos","noDocumento","1","codigo123","1","1"');
+/*
+//se encarga de ejecutar una ves si los valores ya fueron cambiados
+$usuario->setCorreo('actualizado2');
+$usuario->setNickname('actualizado2');
+$usuario->setId(4);
+$arr = $db->UpdatePre($usuario, '`id` = :id');
+$res = $db->Ejecutar($arr);
 
-//////////////////////////////////////////////////////////////////
+$usuario->setCorreo('actualizado3');
+$usuario->setNickname('actualizado3');
+$arr = $db->UpdatePre($usuario, '`contrasena` = "contrasena" and `nickname` = "nickname"');
+$res = $db->Ejecutar($arr);
 
-//actualizar
-//$usuario = new Usuario(2);
-//$usuario->correo = 'lion_3214@hotmail.com123';
-//$usuario->nickname = 'actualizado';
-//$arr = $db->UpdatePre($usuario, '`correo` = :correo, `nickname` = :nickname', '`id` = :id');
+$usuario->setCorreo('lion_3214@hotmail.com.l..l.');
+$usuario->setNickname('XXX');
+$arr = $db->Update($usuario, 'id = "3"');
+*/
 
-//$usuario = new Usuario(3);
-//$usuario->correo = 'lion_3214@hotmail.com.l..l.';
-//$usuario->nickname = 'actualizado';
-//$arr = $db->Update($usuario->GetFrom(), 'correo = "'.$usuario->correo.'", nickname = "'.$usuario->nickname.'"', 'id = "'.$usuario->id.'"');
-//$arr = $db->Update('usuarios', 'correo = "lion_3214@hotmail.com123", nickname = "actualizado123"', 'id = "3"');
 
-//////////////////////////////////////////////////////////////////
+/*
+ * para ejecutar sql en forma de tansaccion hay que llamar primero un metodo y 
+ * terminar con un metodo como se muestra en el siguiente ejemplo de insercion: asi tambien para todo el CRUD
 
-//sin inyeccion
-//$res = $db->Ejecutar($arr);
+$db->readyTransaction();
 
-var_dump($arr);
+$log->setDescripcion('new7');
+$log->setTitulo('titulo');
+$arr2 = $db->InsertPre($log);
+$res2 = $db->Ejecutar($arr2);
+
+$usuario->setCorreo('new7');
+$usuario->setContrasena('contrasena');
+$usuario->setNickname('nickname');
+$usuario->setNombres('nombres');
+$usuario->setApellidos('apellidos');
+$usuario->setNoDocumento('noDocumento');
+$usuario->setActivo('1');
+$usuario->setRol('1');
+$usuario->setTipoDocumento('1');
+$usuario->setCodigo('codigo');
+$arr = $db->InsertPre($usuario);
+$res = $db->Ejecutar($arr);
+
+$db->endTransaction();
+*/
+
+echo '<br>';
+echo '<br>';
 echo '<br>';
 var_dump($res);
 echo '<br>';
-echo $res['contrasena'];
-echo $arr['contrasena'];
+echo '<br>';
+var_dump($res2);
+
+echo '<br>';
+echo 'ARR';
+var_dump($arr);
+echo '<br>';
+echo '<br>';
+var_dump($arr2);
+
+echo phpinfo();
